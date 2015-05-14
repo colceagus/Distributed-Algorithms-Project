@@ -1,0 +1,103 @@
+<project name="Editor" default="client0_cbcast" basedir=".">
+
+	<target name="clean">
+		<delete dir="build"/>
+	</target>
+
+	<path id="master-classpath">
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="build">
+		<echo message="${line.separator}Distributed Algorithms MultiThreaded Machine${line.separator}"/>
+		<echo message="Compiling..."/>
+		<mkdir dir="build/"/>
+		<javac srcdir="src" destdir="build" nowarn="on" debug="true" optimize="true" verbose="false">
+			<classpath refid="master-classpath"/>
+		</javac>
+	</target>
+
+	<!-- CBCAST ALGORITHM -->
+		<target name="client0_cbcast" depends="build">
+			<java classname="main.CollaborativeTextEditor" fork="true">
+				<classpath>
+					<pathelement path="build/"/>
+					<path refid="master-classpath"/>
+				</classpath>
+				<arg value="1"/>
+				<arg value="configurationFile"/>
+				<arg value="CBCAST"/>
+				<arg value="false"/>
+			</java>
+		</target>
+
+		<target name="client0_test_cbcast" depends="build">
+			<java classname="main.CollaborativeTextEditor" fork="true">
+				<classpath>
+					<pathelement path="build/"/>
+					<path refid="master-classpath"/>
+				</classpath>
+				<arg value="1"/>
+				<arg value="configurationFile"/>
+				<arg value="CBCAST"/>
+				<arg value="true"/>
+			</java>
+		</target>
+
+		<target name="client1_cbcast" depends="build">
+			<java classname="main.CollaborativeTextEditor" fork="true">
+				<classpath>
+					<pathelement path="build/"/>
+					<path refid="master-classpath"/>
+				</classpath>
+				<arg value="2"/>
+				<arg value="configurationFile"/>
+				<arg value="CBCAST"/>
+				<arg value="false"/>
+			</java>
+		</target>
+
+		<target name="client1_test_cbcast" depends="build">
+			<java classname="main.CollaborativeTextEditor" fork="true">
+				<classpath>
+					<pathelement path="build/"/>
+					<path refid="master-classpath"/>
+				</classpath>
+				<arg value="2"/>
+				<arg value="configurationFile"/>
+				<arg value="CBCAST"/>
+				<arg value="true"/>
+			</java>
+		</target>
+
+		<target name="client2_cbcast" depends="build">
+			<java classname="main.CollaborativeTextEditor" fork="true">
+				<classpath>
+					<pathelement path="build/"/>
+					<path refid="master-classpath"/>
+				</classpath>
+				<arg value="3"/>
+				<arg value="configurationFile"/>
+				<arg value="CBCAST"/>
+				<arg value="false"/>
+			</java>
+		</target>
+
+		<target name="client2_test_cbcast" depends="build">
+			<java classname="main.CollaborativeTextEditor" fork="true">
+				<classpath>
+					<pathelement path="build/"/>
+					<path refid="master-classpath"/>
+				</classpath>
+				<arg value="3"/>
+				<arg value="configurationFile"/>
+				<arg value="CBCAST"/>
+				<arg value="true"/>
+			</java>
+		</target>
+	<!-- END CBCAST ALGORITHM -->
+	
+	
+</project>
