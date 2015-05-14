@@ -46,10 +46,8 @@ public class GUI extends JFrame {
     public String message = "";
     public int CLIENTS = 1;
 
-    public GUI() {
-    }
 
-    public GUI(int machineNumber, String configFile) {
+    public GUI() {
         setTitle("GUI for MultiThreaded ClientServer Application");
 
         //
