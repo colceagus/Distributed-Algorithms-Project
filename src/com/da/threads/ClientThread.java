@@ -89,12 +89,12 @@ public class ClientThread extends Thread {
 
     @SuppressWarnings("deprecation")
     public void run() {
-        try {
+        /*try {
             Thread.sleep(10000);
             CommModule.readDriverFile();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
         try {
             CommModule.setConnectionStatus(clientId);
             // Client Machine Number

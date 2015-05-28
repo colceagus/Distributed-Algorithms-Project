@@ -79,17 +79,17 @@ public class Client extends Thread{
 		this.setName("Client");
 		try {
 			boolean connected = false;
+			System.out.println("Connecting...");
 			while (!connected){
 				try {
-					System.out.println("Trying...");
 					clientSocket = new Socket(host,port);
 					connected = true;
 				} catch (IOException e){
-					System.out.println("Trying again...");
+					// System.out.println("Trying again...");
 					connected = false;
 				}
 			}
-			System.out.println("Connected!");
+			System.out.println("Connected to "+port+"!");
 			oos = new ObjectOutputStream(clientSocket.getOutputStream());
 			os = new PrintStream(clientSocket.getOutputStream());
 		} catch (UnknownHostException e) {

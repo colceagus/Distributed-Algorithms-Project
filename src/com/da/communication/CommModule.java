@@ -66,6 +66,7 @@ public class CommModule extends Thread {
         this.setName(type.toString());
         this.setConfigFile(configFile);
         this.setProtocol(type);
+        this.listen();
     }
 
     // Protocol(Algorithm) Type Setter
@@ -157,12 +158,18 @@ public class CommModule extends Thread {
 
     // Listen for Incoming Connections
     public void listen() {
-        try {
-            // open a new socket to listen for connections to this machine
-            serverSocket = new ServerSocket(port);
-        } catch (IOException e) {
-            e.printStackTrace();
+        boolean socketConnected = false;
+        while (!socketConnected) {
+            try {
+                // open a new socket to listen for connections to this machine
+                serverSocket = new ServerSocket(port);
+                socketConnected = true;
+            } catch (IOException e) {
+                System.out.println("Server could not connect to port "+port+", trying on "+(port+1));
+                port++;
+            }
         }
+
         Thread listen = new Thread() {
             @Override
             public void run() {
@@ -173,7 +180,7 @@ public class CommModule extends Thread {
                         // listen for a upcoming connection, accept that
                         // connection
                         clientSocket = serverSocket.accept();
-
+                        System.out.println("new connection accepted.");
                         // look for available threads for processing that
                         // connection
                         for (int i = 0; i < CLIENTS; i++) {
@@ -214,8 +221,12 @@ public class CommModule extends Thread {
             public void run() {
                 // implement connections with timeout
                 try {
-                    connections.add(new Client(clientParams.get(0)[0], Integer
-                            .parseInt(clientParams.get(0)[1])));
+                    for (int i = 0; i < clientParams.size(); i++) {
+                        System.out.println(clientParams.get(i)[0]+":"+clientParams.get(i)[1]);
+                        connections.add(new Client(clientParams.get(i)[0], Integer
+                                .parseInt(clientParams.get(i)[1])));
+                    }
+
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -296,7 +307,7 @@ public class CommModule extends Thread {
 
     // Thread Run Method
     public void run() {
-        listen();
+
         connect();
 
     }
