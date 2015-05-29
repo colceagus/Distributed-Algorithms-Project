@@ -97,22 +97,26 @@ public class CommModule extends Thread {
             // set connection Status Vector
             connectionsStatus = new boolean[CLIENTS];
 
-            // read server address, server port, machine number
+            // read Machine Number
             strLine = br.readLine();
-            String[] params = strLine.split(" ");
+            MachineNumber = Integer.parseInt(strLine);
 
-            // Server Parameters
-            address = params[0];
-            port = Integer.parseInt(params[1]);
-            MachineNumber = Integer.parseInt(params[2]);
-            setConnectionStatus(MachineNumber);
-            // Create Client Parameters for further processing
-            // for one connection only now
-            for (int i = 0; i < CLIENTS - 1; i++) {
+            // read server address, server port
+            // read clients' addresses and ports
+            for (int i = 0; i < CLIENTS; i++) {
                 strLine = br.readLine();
-                params = strLine.split(" ");
-                clientParams.add(params);
+                String[] params = strLine.split(" ");
+                if (i != MachineNumber) {
+                    // Create Client Parameters for further processing
+                    clientParams.add(params);
+                } else {
+                    // Server Parameters
+                    address = params[0];
+                    port = Integer.parseInt(params[1]);
+                }
             }
+
+            setConnectionStatus(MachineNumber);
 
             // Create Communication Module based on Protocol(Algorithm) Type
             createComm();
@@ -189,10 +193,15 @@ public class CommModule extends Thread {
                             // communication to be processed
                             if (threads[i] == null) {
                                 (threads[i] = new ClientThread(clientSocket, threads)).start();
-                                for (int j = 0; j < CLIENTS; i++)
-                                    if (j != i) {
-                                        threads[j].threads = threads;
-                                    }
+                                try {
+                                    for (int j = 0; j < threads.length; j++)
+                                        if (threads[j] != null)
+                                        if (j != i) {
+                                            threads[j].threads = threads;
+                                        }
+                                } catch (NullPointerException e) {
+                                    System.out.println("Not all clients connected. accessed connection empty connection socket");
+                                }
                                 break;
                             }
 
@@ -223,8 +232,7 @@ public class CommModule extends Thread {
                 try {
                     for (int i = 0; i < clientParams.size(); i++) {
                         System.out.println(clientParams.get(i)[0]+":"+clientParams.get(i)[1]);
-                        connections.add(new Client(clientParams.get(i)[0], Integer
-                                .parseInt(clientParams.get(i)[1])));
+                        connections.add(new Client(clientParams.get(i)[0], Integer.parseInt(clientParams.get(i)[1])));
                     }
 
                 } catch (NullPointerException e) {

@@ -310,5 +310,9 @@ public class GUI extends JFrame {
 
     public static void main(String[] args) {
         window = new GUI();
+        if (args.length > 0) {
+            String number = args[0];
+            configFile = "machine" + number + ".txt";
+        }
     }
 }

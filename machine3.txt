@@ -1,4 +1,5 @@
 3
-localhost 2224 2
-localhost 2223
+2
 localhost 2222
+localhost 2223
+localhost 2224

@@ -79,7 +79,7 @@ public class Client extends Thread{
 		this.setName("Client");
 		try {
 			boolean connected = false;
-			System.out.println("Connecting...");
+			System.out.println("Client Connecting to "+host+":"+port+"...");
 			while (!connected){
 				try {
 					clientSocket = new Socket(host,port);
@@ -89,7 +89,7 @@ public class Client extends Thread{
 					connected = false;
 				}
 			}
-			System.out.println("Connected to "+port+"!");
+			System.out.println("Connected to "+host+":"+port+"!");
 			oos = new ObjectOutputStream(clientSocket.getOutputStream());
 			os = new PrintStream(clientSocket.getOutputStream());
 		} catch (UnknownHostException e) {
@@ -98,10 +98,9 @@ public class Client extends Thread{
 			e.printStackTrace();
 		}
 		
-		if (clientSocket != null && os != null ) { //&& is != null
-		        System.out.println("The client started. Type any text. To quit it type 'q' in 1st position in the text area.");
+		if (clientSocket != null && os != null ) {
 		        os.println(CommModule.MachineNumber);
-		        System.out.println("My number is :"+CommModule.MachineNumber);
+		        System.out.println("My number is :"+CommModule.MachineNumber+" and has been sent to "+host+":"+port+"!");
 		}
 	}
 	
