@@ -9,8 +9,7 @@ public class MessageCBCAST extends Message implements java.io.Serializable{
 	// Vector TimeStamp
 	public ArrayList<Integer> vt;
 	public int vtlen =  CommModule.connections.size() + 1;
-	public Date time = new Date();
-	
+
 	public MessageCBCAST() {
 		super();
 		vtlen = CommModule.connections.size() + 1;
@@ -44,13 +43,5 @@ public class MessageCBCAST extends Message implements java.io.Serializable{
 		
 		svt += "]";
 		return "(" + getOperation().toString() + "," + svt + ")";
-	}
-
-	public void timestamp() {
-		this.time = new Date(System.currentTimeMillis());
-	}
-	
-	public Date getTimestamp() {
-		return this.time;
 	}
 }

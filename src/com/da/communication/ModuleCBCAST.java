@@ -37,7 +37,6 @@ public class ModuleCBCAST extends Thread implements Module{
 		Integer x = vt.get(CommModule.MachineNumber) + 1;
 		vt.set(CommModule.MachineNumber, x);
 		msg.setVT(vt);
-		msg.timestamp();
 		for (int i = 0; i < CommModule.connections.size(); i++) {
 			try {
 				CommModule.connections.get(i).send(msg);
@@ -69,7 +68,11 @@ public class ModuleCBCAST extends Thread implements Module{
 		return false;
 	}
 
-	public void deliver(MessageCBCAST m) {
+	public void deliver(MessageCBCAST msg) {
+		// update client's vector timestamp
+		updateVT(msg.vt);
+		// execute operation on GUI
+		executeOperation(msg.operation);
 	}
 
 	// Message Processing Function with Queue Ordering and Delay
@@ -81,10 +84,7 @@ public class ModuleCBCAST extends Thread implements Module{
 			ModuleCBCAST.msgQueue.add(msg);
 			Collections.sort(ModuleCBCAST.msgQueue, new VTComparator());
 		} else {
-			// update client's vector timestamp
-			updateVT(msg.vt);
-			// execute operation on GUI
-			executeOperation(msg.operation);
+			deliver(msg);
 		}
 
 		boolean atLeastOneDelivered = true;
@@ -95,10 +95,7 @@ public class ModuleCBCAST extends Thread implements Module{
 				MessageCBCAST cbcastMessageTemp = (MessageCBCAST) message;
 				if (!needsDelay(clientId, cbcastMessageTemp)) {
 					temp.add(message);
-					// update client's vector timestamp
-					updateVT(msg.vt);
-					// execute operation on GUI
-					executeOperation(msg.operation);
+					deliver(msg);
 					atLeastOneDelivered = true;
 				}
 			}
