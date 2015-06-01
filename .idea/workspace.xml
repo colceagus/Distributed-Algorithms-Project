@@ -4,11 +4,7 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b827d1ea-fab2-43a5-99f2-ee7661d14fc6" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/da/threads/Client.java" afterPath="$PROJECT_DIR$/src/com/da/threads/Client.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/da/communication/CommModule.java" afterPath="$PROJECT_DIR$/src/com/da/communication/CommModule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/da/communication/ModuleCBCAST.java" afterPath="$PROJECT_DIR$/src/com/da/communication/ModuleCBCAST.java" />
-    </list>
+    <list default="true" id="b827d1ea-fab2-43a5-99f2-ee7661d14fc6" name="Default" comment="" />
     <ignored path="MultiThreadedMachine.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
