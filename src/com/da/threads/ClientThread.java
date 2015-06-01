@@ -41,6 +41,8 @@ public class ClientThread extends Thread {
 
     public Socket clientSocket = null;
 
+    private boolean isConnected = false;
+
     public ClientThread(Socket clientSocket, ClientThread[] threads) {
         this.setName("ClientThread on Socket: " + clientSocket.getInetAddress());
         this.clientSocket = clientSocket;
@@ -89,14 +91,8 @@ public class ClientThread extends Thread {
 
     @SuppressWarnings("deprecation")
     public void run() {
-        /*try {
-            Thread.sleep(10000);
-            CommModule.readDriverFile();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
         try {
-            CommModule.setConnectionStatus(clientId);
+
             // Client Machine Number
             String number = is.readLine();
             this.clientId = Integer.parseInt(number);

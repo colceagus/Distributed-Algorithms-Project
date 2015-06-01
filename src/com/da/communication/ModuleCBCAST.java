@@ -39,7 +39,11 @@ public class ModuleCBCAST extends Thread implements Module{
 		msg.setVT(vt);
 		msg.timestamp();
 		for (int i = 0; i < CommModule.connections.size(); i++) {
-			CommModule.connections.get(i).send(msg);
+			try {
+				CommModule.connections.get(i).send(msg);
+			} catch (NullPointerException e) {
+				System.out.println("sendind a message to a non-existant (non-connected) connection "+i);
+			}
 		}
 	}
 	

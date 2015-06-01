@@ -1,24 +1,17 @@
 package com.da.communication;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-
 import com.da.communication.messages.Message;
 import com.da.communication.messages.MessageFactory;
 import com.da.communication.messages.Operation;
-import com.da.gui.GUI;
 import com.da.threads.Client;
 import com.da.threads.ClientThread;
 import com.da.types.OType;
 import com.da.types.Protocol;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 
 public class CommModule extends Thread {
     //
@@ -33,112 +26,34 @@ public class CommModule extends Thread {
     public static int CLIENTS = 3;
     public static ArrayList<String[]> clientParams = new ArrayList<String[]>();
     public static boolean[] connectionsStatus = new boolean[CLIENTS];
-    public static ClientThread[] threads = new ClientThread[CLIENTS];
+    public static ClientThread[] threads = new ClientThread[CLIENTS - 1];
     public static ArrayList<Client> connections = new ArrayList<Client>();
 
     // Protocol
     public static Protocol type;
 
     // Configuration
-    public static String configFile;
-
-    // public static CommModule module ;
-    private static Socket clientSocket = null;
-
+    public static String configFile = "config.txt";
     // Communication
     // instance of the Protocol Module
     public static Module commModule = null;
-
-    // "Factory" Function
-    public void createComm() {
-        switch (type) {
-            case CBCAST:
-                commModule = new ModuleCBCAST();
-                break;
-            default:
-                commModule = new ModuleCBCAST();
-                break;
-        }
-    }
+    // public static CommModule module ;
+    private static Socket clientSocket = null;
 
     // Constructor
+    // empty constructor -> temporary
+    public CommModule() {
+        this.setName("Default");
+        this.setConfigFile("config.txt");
+        this.setProtocol(Protocol.CBCAST);
+    }
+
+
     public CommModule(String configFile, Protocol type) {
         this.setName(type.toString());
         this.setConfigFile(configFile);
         this.setProtocol(type);
-        this.listen();
-    }
 
-    // Protocol(Algorithm) Type Setter
-    public void setProtocol(Protocol prot) {
-        CommModule.type = prot;
-        this.setName(prot.toString());
-    }
-
-    // Configuration File Setter
-    public void setConfigFile(String config) {
-        CommModule.configFile = config;
-    }
-
-    // Parser And Processor Function for Configuration File
-    public void parseConfig(String configFile) {
-        FileInputStream fstream;
-        try {
-
-            fstream = new FileInputStream(configFile);
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-            // first read number of clients
-            String strLine = br.readLine();
-            CLIENTS = Integer.parseInt(strLine);
-            System.out.println("Number of clients: " + CLIENTS);
-
-            // set connection Status Vector
-            connectionsStatus = new boolean[CLIENTS];
-
-            // read Machine Number
-            strLine = br.readLine();
-            MachineNumber = Integer.parseInt(strLine);
-
-            // read server address, server port
-            // read clients' addresses and ports
-            for (int i = 0; i < CLIENTS; i++) {
-                strLine = br.readLine();
-                String[] params = strLine.split(" ");
-                if (i != MachineNumber) {
-                    // Create Client Parameters for further processing
-                    clientParams.add(params);
-                } else {
-                    // Server Parameters
-                    address = params[0];
-                    port = Integer.parseInt(params[1]);
-                }
-            }
-
-            setConnectionStatus(MachineNumber);
-
-            // Create Communication Module based on Protocol(Algorithm) Type
-            createComm();
-
-            br.close();
-            in.close();
-            fstream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Port Number Setter
-    public void setPort(int port) {
-        CommModule.port = port;
-    }
-
-    // Machine Number Setter
-    public void setNumber(int number) {
-        CommModule.MachineNumber = number;
     }
 
     // set client id connection flag to true
@@ -150,97 +65,7 @@ public class CommModule extends Thread {
             System.out.println("connection status index error");
             e.printStackTrace();
         }
-        // verify for all clients connection
-        // then read Driver File, Execute operations to Send Messages to Other
-        // Connected Clients
-        int i = 0;
-        for (; i < connectionsStatus.length && connectionsStatus[i]; i++) ;
-        if (i == connectionsStatus.length) {
-            readDriverFile();
-        }
-    }
 
-    // Listen for Incoming Connections
-    public void listen() {
-        boolean socketConnected = false;
-        while (!socketConnected) {
-            try {
-                // open a new socket to listen for connections to this machine
-                serverSocket = new ServerSocket(port);
-                socketConnected = true;
-            } catch (IOException e) {
-                System.out.println("Server could not connect to port "+port+", trying on "+(port+1));
-                port++;
-            }
-        }
-
-        Thread listen = new Thread() {
-            @Override
-            public void run() {
-
-                // we will listen indefinitely for incoming connections
-                while (true) {
-                    try {
-                        // listen for a upcoming connection, accept that
-                        // connection
-                        clientSocket = serverSocket.accept();
-                        System.out.println("new connection accepted.");
-                        // look for available threads for processing that
-                        // connection
-                        for (int i = 0; i < CLIENTS; i++) {
-
-                            // find a new unallocated thread for the new
-                            // communication to be processed
-                            if (threads[i] == null) {
-                                (threads[i] = new ClientThread(clientSocket, threads)).start();
-                                try {
-                                    for (int j = 0; j < threads.length; j++)
-                                        if (threads[j] != null)
-                                        if (j != i) {
-                                            threads[j].threads = threads;
-                                        }
-                                } catch (NullPointerException e) {
-                                    System.out.println("Not all clients connected. accessed connection empty connection socket");
-                                }
-                                break;
-                            }
-
-                            // if maximum connection number is met, refuse the
-                            // new connection.
-                            if (i == CLIENTS) {
-                                PrintStream os = new PrintStream(clientSocket.getOutputStream());
-                                os.println("Server Full. Try again.");
-                                os.close();
-                                clientSocket.close();
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        listen.start();
-    }
-
-    // Connect to the Other Machines
-    public void connect() {
-        Thread connect = new Thread("Connections Thread") {
-            @Override
-            public void run() {
-                // implement connections with timeout
-                try {
-                    for (int i = 0; i < clientParams.size(); i++) {
-                        System.out.println(clientParams.get(i)[0]+":"+clientParams.get(i)[1]);
-                        connections.add(new Client(clientParams.get(i)[0], Integer.parseInt(clientParams.get(i)[1])));
-                    }
-
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        connect.start();
     }
 
     // Message Sender Function
@@ -312,11 +137,215 @@ public class CommModule extends Thread {
         }
     }
 
+    // "Factory" Function
+    public void createComm() {
+        switch (type) {
+            case CBCAST:
+                commModule = new ModuleCBCAST();
+                break;
+            default:
+                commModule = new ModuleCBCAST();
+                break;
+        }
+    }
 
+    public void bootUp(Protocol type) {
+        this.setName(type.toString());
+        this.parseConfig();
+        this.setProtocol(type);
+        this.createComm();
+        this.listen();
+    }
+
+    // Protocol(Algorithm) Type Setter
+    public void setProtocol(Protocol prot) {
+        CommModule.type = prot;
+        this.setName(prot.toString());
+    }
+
+    // Configuration File Setter
+    public void setConfigFile(String config) {
+        CommModule.configFile = config;
+    }
+
+    // Parser And Processor Function for Configuration File
+    public void parseConfig() {
+        FileInputStream fstream;
+        try {
+
+            fstream = new FileInputStream(configFile);
+            DataInputStream in = new DataInputStream(fstream);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+            // first read number of clients
+            String strLine = br.readLine();
+            CLIENTS = Integer.parseInt(strLine);
+            System.out.println("Number of clients: " + CLIENTS);
+
+            // set connection Status Vector
+            connectionsStatus = new boolean[CLIENTS - 1];
+
+            // read Machine Number
+            //
+            // !!! Now, The Machine Number is received through program arguments
+            //
+
+            // read server address, server port
+            // read clients' addresses and ports
+            for (int i = 0; i < CLIENTS; i++) {
+                strLine = br.readLine();
+                String[] params = strLine.split(" ");
+                if (i != MachineNumber) {
+                    // Create Client Parameters for further processing
+                    clientParams.add(params);
+                } else {
+                    // Server Parameters
+                    address = params[0];
+                    port = Integer.parseInt(params[1]);
+                }
+            }
+
+            // Create Communication Module based on Protocol(Algorithm) Type
+            // createComm();
+
+            br.close();
+            in.close();
+            fstream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Port Number Setter
+    public void setPort(int port) {
+        CommModule.port = port;
+    }
+
+    // Machine Number Setter
+    public void setNumber(int number) {
+        CommModule.MachineNumber = number;
+    }
+
+    // Listen for Incoming Connections
+    public void listen() {
+        boolean socketConnected = false;
+        while (!socketConnected) {
+            try {
+                // open a new socket to listen for connections to this machine
+                serverSocket = new ServerSocket(port);
+                socketConnected = true;
+            } catch (IOException e) {
+                System.out.println("Server could not connect to port " + port + ", trying on " + (port + 1));
+                port++;
+            }
+        }
+
+        Thread listen = new Thread() {
+            @Override
+            public void run() {
+
+                // we will listen indefinitely for incoming connections
+                while (true) {
+                    try {
+                        // listen for a upcoming connection, accept that
+                        // connection
+                        clientSocket = serverSocket.accept();
+                        System.out.println("new connection accepted.");
+                        // look for available threads for processing that
+                        // connection
+                        for (int i = 0; i < CLIENTS; i++) {
+
+                            // find a new unallocated thread for the new
+                            // communication to be processed
+                            if (threads[i] == null) {
+                                (threads[i] = new ClientThread(clientSocket, threads)).start();
+                                try {
+                                    for (int j = 0; j < threads.length; j++)
+                                        if (threads[j] != null)
+                                            if (j != i) {
+                                                threads[j].threads = threads;
+                                            }
+                                } catch (NullPointerException e) {
+                                    System.out.println("Not all clients connected. accessed connection empty connection socket");
+                                }
+                                break;
+                            }
+
+                            // if maximum connection number is met, refuse the
+                            // new connection.
+                            if (i == CLIENTS) {
+                                PrintStream os = new PrintStream(clientSocket.getOutputStream());
+                                os.println("Server Full. Try again.");
+                                os.close();
+                                clientSocket.close();
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        listen.start();
+    }
+
+    // Connect to the Other Machines
+    public void connect() {
+        Thread connect = new Thread("Connections Thread") {
+            @Override
+            public void run() {
+                // implement connections with timeout
+
+                // client Number for setting connection status
+                int cn = 0;
+                try {
+                    for (int i = 0; i < clientParams.size(); i++) {
+                        System.out.println(clientParams.get(i)[0] + ":" + clientParams.get(i)[1]);
+                        connections.add(new Client(clientParams.get(i)[0], Integer.parseInt(clientParams.get(i)[1])));
+                    }
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        connect.start();
+    }
+
+
+    public boolean allClientsConnected() {
+
+        for (int i = 0; i < threads.length; i++) {
+            if (threads[i] == null) {
+                return false;
+            }
+        }
+
+        for (int i = 0; i < connections.size(); i ++) {
+            if (connections.get(i).isConnected() == false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
     // Thread Run Method
     public void run() {
 
         connect();
 
+        while (allClientsConnected() == false) {
+            try {
+                Thread.sleep(3000);
+                System.out.println("Waiting for all clients to connect...");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Connected to all clients. Reading and Executing Driver file...");
+        readDriverFile();
+        System.out.println("Done.");
     }
 }
