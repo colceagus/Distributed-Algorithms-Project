@@ -126,6 +126,8 @@ public class CommModule extends Thread {
                 executeOperation(operation);
 
                 line = br.readLine();
+
+                Thread.sleep((int)(Math.random() * 500));
             }
             br.close();
             in.close();
@@ -133,6 +135,8 @@ public class CommModule extends Thread {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

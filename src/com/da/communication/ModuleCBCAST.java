@@ -32,7 +32,7 @@ public class ModuleCBCAST extends Thread implements Module{
 	}
 	
 	// Send message method
-	public void send(Message m){
+	public synchronized void send(Message m){
 		MessageCBCAST msg = (MessageCBCAST) m;
 		Integer x = vt.get(CommModule.MachineNumber) + 1;
 		vt.set(CommModule.MachineNumber, x);
@@ -46,21 +46,36 @@ public class ModuleCBCAST extends Thread implements Module{
 			}
 		}
 	}
-	
-	public void updateVT(ArrayList<Integer> cvt){
+
+	public synchronized void updateVT(ArrayList<Integer> cvt){
 		for (int i = 0; i < cvt.size(); i ++) {
-			if (cvt.get(i) > vt.get(i)){
-				vt.set(i, cvt.get(i));
-			}
+			vt.set(i, Math.max(cvt.get(i),vt.get(i)));
 		}
 	}
+	public boolean needsDelay(int client, MessageCBCAST m) {
+		ArrayList<Integer> timestamp = m.vt;
+		if (timestamp.get(client) != (ModuleCBCAST.vt.get(client) + 1) && client != CommModule.MachineNumber) {
+			return true;
+		}
 
+		for (int i = 0; i < timestamp.size(); i++) {
+			if (i != client && client != CommModule.MachineNumber) {
+				if (timestamp.get(i) > vt.get(i)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 	// Message Processing Function with Queue Ordering and Delay
-	public void processMessage(int clientId, Message m){
+	public synchronized void processMessage(int clientId, Message m){
 		MessageCBCAST msg = (MessageCBCAST) m;
 		// primesc msg
 		// vad daca poate fi livrat
-		
+		/*if (needsDelay(clientId, msg)) {
+
+		}*/
 		boolean deliver = true;
 		// prima conditie
 		if (ModuleCBCAST.vt.get(clientId) + 1 == msg.vt.get(clientId)){
@@ -131,7 +146,7 @@ public class ModuleCBCAST extends Thread implements Module{
 	}
 
 	// Execute Operation From Message on GUI Text Area
-	public void executeOperation(Operation op){
+	public synchronized void executeOperation(Operation op){
 		int pos;
 		String chr = "";
 
@@ -160,6 +175,5 @@ public class ModuleCBCAST extends Thread implements Module{
 				break;
 		}
 	}
-	public void run() {
-	}
+	public void run() {}
 }

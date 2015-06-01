@@ -9,11 +9,12 @@ import com.da.communication.messages.MessageCBCAST;
 public class VTComparator implements Comparator<MessageCBCAST>{
 	
 	//@Override
+
 	 public int compare(MessageCBCAST m1, MessageCBCAST m2) {
 		
 		ArrayList<Integer> vt1 = m1.vt; 
 		ArrayList<Integer> vt2 = m2.vt;
-
+		 /*
 		int[] comparison  = new int[vt1.size()];
 		boolean isGreater = false;
 		boolean isOne = false, isMinusOne = false;
@@ -33,25 +34,13 @@ public class VTComparator implements Comparator<MessageCBCAST>{
 			return (m1.senderId > m2.senderId) ? 1 : -1;
 		
 		return (isGreater == true) ? 1 : -1;
+		*/
+		 for (int i = 0; i < vt1.size(); i++) {
+			 if (vt1.get(i) >= vt2.get(i)) {
+				 return 1;
+			 }
+		 }
+		 return -1;
 	}
-    /*
-    @Override
-    public int compare(MessageCBCAST m1, MessageCBCAST m2) {
-        boolean areEq = true;
 
-        ArrayList<Integer> vt1 = m1.vt;
-        ArrayList<Integer> vt2 = m2.vt;
-
-        for (int i = 0; i < vt1.size(); i ++  ) {
-            if (vt1.get(i) > vt2.get(i))
-                return 1;
-            if (vt1.get(i) < vt2.get(i))
-                areEq = false;
-        }
-
-        if (areEq)
-            return 0;
-
-        return -1;
-    }*/
 }
