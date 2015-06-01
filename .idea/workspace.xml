@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b827d1ea-fab2-43a5-99f2-ee7661d14fc6" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/da/communication/CommModule.java" afterPath="$PROJECT_DIR$/src/com/da/communication/CommModule.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/da/communication/ModuleCBCAST.java" afterPath="$PROJECT_DIR$/src/com/da/communication/ModuleCBCAST.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/da/utils/VTComparator.java" afterPath="$PROJECT_DIR$/src/com/da/utils/VTComparator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="MultiThreadedMachine.iws" />
@@ -84,11 +82,11 @@
       <file leaf-file-name="ModuleCBCAST.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/da/communication/ModuleCBCAST.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.641196">
-              <caret line="144" column="10" selection-start-line="144" selection-start-column="10" selection-end-line="144" selection-end-column="10" />
+            <state vertical-scroll-proportion="0.029900333">
+              <caret line="109" column="9" selection-start-line="109" selection-start-column="9" selection-end-line="109" selection-end-column="9" />
               <folding>
                 <element signature="e#461#470#0" expanded="true" />
-                <element signature="e#2970#2985#0" expanded="true" />
+                <element signature="e#2622#2631#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -931,7 +929,7 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#461#470#0" expanded="true" />
-            <element signature="e#2970#2985#0" expanded="true" />
+            <element signature="e#2622#2631#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1134,11 +1132,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/da/communication/ModuleCBCAST.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.641196">
-          <caret line="144" column="10" selection-start-line="144" selection-start-column="10" selection-end-line="144" selection-end-column="10" />
+        <state vertical-scroll-proportion="0.029900333">
+          <caret line="109" column="9" selection-start-line="109" selection-start-column="9" selection-end-line="109" selection-end-column="9" />
           <folding>
             <element signature="e#461#470#0" expanded="true" />
-            <element signature="e#2970#2985#0" expanded="true" />
+            <element signature="e#2622#2631#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -68,79 +68,44 @@ public class ModuleCBCAST extends Thread implements Module{
 
 		return false;
 	}
+
+	public void deliver(MessageCBCAST m) {
+	}
+
 	// Message Processing Function with Queue Ordering and Delay
 	public synchronized void processMessage(int clientId, Message m){
 		MessageCBCAST msg = (MessageCBCAST) m;
 		// primesc msg
 		// vad daca poate fi livrat
-		/*if (needsDelay(clientId, msg)) {
-
-		}*/
-		boolean deliver = true;
-		// prima conditie
-		if (ModuleCBCAST.vt.get(clientId) + 1 == msg.vt.get(clientId)){
-			// a doua conditie de livrare
-			for (int i = 0; i < msg.vt.size() && deliver; i ++) {
-				
-				if (i != clientId)
-				if (msg.vt.get(i) <= ModuleCBCAST.vt.get(i))
-					deliver = true;
-				else 
-					deliver = false;
-			}
-		}
-		if (deliver) {
+		if (needsDelay(clientId, msg)) {
+			ModuleCBCAST.msgQueue.add(msg);
+			Collections.sort(ModuleCBCAST.msgQueue, new VTComparator());
+		} else {
 			// update client's vector timestamp
 			updateVT(msg.vt);
-			//ModuleCBCAST.vt.set(clientId,msg.vt.get(clientId));
-			
 			// execute operation on GUI
 			executeOperation(msg.operation);
-			
-			// after execution check again for all messages delivery
-		}else{
-			// daca nu, adaug in queue, sortez, verific din nou pentru queue[0]
-			ModuleCBCAST.msgQueue.add(msg);
-			List<MessageCBCAST> queue = new ArrayList<MessageCBCAST>(ModuleCBCAST.msgQueue);
-			
-			for (int i=0;i<queue.size();i++) { 
-				System.out.println(queue.get(i)+" ");
-			}
-			
-			queue.add(msg);
-			Collections.sort(queue, new VTComparator());
-			// sortez coada
-			System.out.println();
-			System.out.print("Queue: ");
-			for (int i=0;i<queue.size();i++) { 
-				System.out.print(queue.get(i)+" ");
-			}
-			System.out.println();
-			// pentru a livra verific primul mesaj din coada si compar vt din mesaj cu current vt al site-ului
-			
-			deliver = true;
-			msg = queue.get(0);
-			// prima conditie
-			if (ModuleCBCAST.vt.get(clientId) + 1 == msg.vt.get(clientId)){
-				// a doua conditie de livrare
-				for (int i = 0; i < msg.vt.size() && deliver; i ++) {
-					
-					if (i != clientId)
-					if (msg.vt.get(i) <= ModuleCBCAST.vt.get(i))
-						deliver = true;
-					else 
-						deliver = false;
+		}
+
+		boolean atLeastOneDelivered = true;
+		while(atLeastOneDelivered) {
+			atLeastOneDelivered = false;
+			ArrayList<Message> temp = new ArrayList<Message>();
+			for (Message message : ModuleCBCAST.msgQueue) {
+				MessageCBCAST cbcastMessageTemp = (MessageCBCAST) message;
+				if (!needsDelay(clientId, cbcastMessageTemp)) {
+					temp.add(message);
+					// update client's vector timestamp
+					updateVT(msg.vt);
+					// execute operation on GUI
+					executeOperation(msg.operation);
+					atLeastOneDelivered = true;
 				}
 			}
-			if (deliver) {
-				// update client's vector timestamp
-				updateVT(msg.vt);
-				//ModuleCBCAST.vt.set(clientId,msg.vt.get(clientId));
-				
-				// execute operation on GUI
-				executeOperation(queue.remove(0).operation);
-				
-				// after execution check again for all messages delivery
+
+			for (Message message : temp) {
+				ModuleCBCAST.msgQueue.remove(message);
+				Collections.sort(ModuleCBCAST.msgQueue, new VTComparator());
 			}
 		}
 	}
