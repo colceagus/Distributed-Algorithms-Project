@@ -102,8 +102,8 @@ public class ModuleCBCAST extends Thread implements Module{
 
 			for (Message message : temp) {
 				ModuleCBCAST.msgQueue.remove(message);
-				Collections.sort(ModuleCBCAST.msgQueue, new VTComparator());
 			}
+			Collections.sort(ModuleCBCAST.msgQueue, new VTComparator());
 		}
 	}
 

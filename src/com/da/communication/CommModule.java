@@ -342,7 +342,7 @@ public class CommModule extends Thread {
 
         while (allClientsConnected() == false) {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
                 System.out.println("Waiting for all clients to connect...");
             } catch (InterruptedException e) {
                 e.printStackTrace();

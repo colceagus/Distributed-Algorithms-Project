@@ -77,13 +77,14 @@ public class Client extends Thread {
         this.setName("Client");
         try {
             System.out.println("Client Connecting to " + host + ":" + port + "...");
-            while (!connected) {
+            boolean isConnected = false;
+            while (!isConnected) {
                 try {
                     clientSocket = new Socket(host, port);
-                    connected = true;
+                    isConnected = true;
                 } catch (IOException e) {
                     // System.out.println("Trying again...");
-                    connected = false;
+                    isConnected = false;
                 }
             }
             System.out.println("Connected to " + host + ":" + port + "!");
@@ -99,6 +100,8 @@ public class Client extends Thread {
             os.println(CommModule.MachineNumber);
             System.out.println("My Machine is " + CommModule.MachineNumber + " and has been sent to " + host + ":" + port + "!");
         }
+
+        connected = true;
     }
 
     public boolean isConnected() {
