@@ -1,7 +1,6 @@
 package com.da.communication;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import com.da.communication.messages.Message;
 import com.da.communication.messages.MessageCBCAST;
@@ -87,16 +86,16 @@ public class ModuleCBCAST extends Thread implements Module{
 			deliver(msg);
 		}
 
-		boolean atLeastOneDelivered = true;
-		while(atLeastOneDelivered) {
-			atLeastOneDelivered = false;
+		boolean deliveredOne = true;
+		while(deliveredOne) {
+			deliveredOne = false;
 			ArrayList<Message> temp = new ArrayList<Message>();
 			for (Message message : ModuleCBCAST.msgQueue) {
 				MessageCBCAST cbcastMessageTemp = (MessageCBCAST) message;
 				if (!needsDelay(clientId, cbcastMessageTemp)) {
 					temp.add(message);
 					deliver(msg);
-					atLeastOneDelivered = true;
+					deliveredOne = true;
 				}
 			}
 
