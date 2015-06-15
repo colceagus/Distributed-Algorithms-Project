@@ -324,6 +324,8 @@ public class CommModule extends Thread {
         for (int i = 0; i < threads.length; i++) {
             if (threads[i] == null) {
                 return false;
+            } else if (threads[i].isConnected() == false) {
+                return false;
             }
         }
 
@@ -337,18 +339,19 @@ public class CommModule extends Thread {
     }
     // Thread Run Method
     public void run() {
-
         connect();
 
         while (allClientsConnected() == false) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3000);
                 System.out.println("Waiting for all clients to connect...");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
         System.out.println("Connected to all clients. Reading and Executing Driver file...");
+
         readDriverFile();
         System.out.println("Done.");
     }

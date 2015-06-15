@@ -89,6 +89,10 @@ public class ClientThread extends Thread {
         }
     }
 
+    public boolean isConnected(){
+        return isConnected;
+    }
+
     @SuppressWarnings("deprecation")
     public void run() {
         try {
@@ -97,7 +101,7 @@ public class ClientThread extends Thread {
             String number = is.readLine();
             this.clientId = Integer.parseInt(number);
             System.out.println("client with number " + clientId + " has connected");
-
+            isConnected = true;
             try {
                 // read the right type of message from the stream based on the protocol used in CommModule
                 Message cbmsg;
